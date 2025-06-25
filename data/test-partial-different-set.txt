@@ -1,0 +1,9 @@
+# Test partial matching with different sets
+# This should test partial matching when the set doesn't match either
+
+# Partial match with wrong set - should still find the card
+Ballista Watcher [ZNR]           # Should match "Ballista Watcher // Ballista Wielder" from VOW
+Arborea Pegasus (Showcase) [NEO] # Should match "Arborea Pegasus" from AFR
+
+# Regular case for comparison
+Lightning Bolt [LEA]             # Should be exact match

@@ -1,0 +1,14 @@
+# Test file for partial matching functionality
+
+# Exact matches should still work
+Lightning Bolt [LEA]
+
+# Partial matches - query name is subset of card name
+Ballista Watcher [VOW]           # Should match "Ballista Watcher // Ballista Wielder"
+Arborea Pegasus (Showcase) [AFR] # Should match "Arborea Pegasus" (removing showcase variant)
+
+# Regular fallback - different set
+Lightning Bolt [M21]             # Should fallback to LEA
+
+# No match
+Nonexistent Card [FAKE]

@@ -6,9 +6,12 @@ A TypeScript command-line tool that reads a list of Magic: The Gathering card na
 
 - **Input Processing**: Parse text files with format `Card Name [SET]` or `Count Card Name [SET]`
 - **Exact Matching**: Case-insensitive exact matching for both card names and set codes
-- **Intelligent Fallback**: When exact matches fail, automatically finds cards by name from the most recent available set
+- **Multi-tier Fallback System**:
+  - Name-only fallback for wrong set codes
+  - Partial matching for double-faced cards and variants (showcase, etc.)
+  - Always selects most recent printing when multiple options exist
 - **JSON Output**: Write matched cards to a new JSON file
-- **Enhanced Reporting**: Clear distinction between exact and fallback matches
+- **Enhanced Reporting**: Clear distinction between exact, fallback, and partial matches
 - **Error Handling**: Comprehensive error reporting and validation
 - **CLI Interface**: Command-line interface with helpful options
 
@@ -229,15 +232,25 @@ The tool uses a two-tier matching system:
 - **Normalization**: Trims whitespace and handles special characters consistently
 
 ### Fallback Matching
-When an exact name+set combination is not found, the tool automatically falls back to:
+When an exact name+set combination is not found, the tool automatically uses a multi-tier fallback system:
+
+#### Tier 1: Name-only matching
 - **Name-only matching**: Finds cards with the same name from any available set
 - **Most recent printing**: Selects the card with the most recent release date
-- **Clear reporting**: Distinguishes between exact and fallback matches in output
 
-**Example:**
-- Query: `Lightning Bolt [M21]` (not in database)
-- Fallback: Finds `Lightning Bolt [LEA]` (most recent available printing)
-- Console output: `Fallback: Lightning Bolt [M21] → found in [LEA] (1993-08-05)`
+#### Tier 2: Partial name matching
+- **Subset matching**: Handles cases where query name is part of card name (e.g., `Ballista Watcher` matches `Ballista Watcher // Ballista Wielder`)
+- **Superset matching**: Handles cases where card name is part of query name (e.g., `Arborea Pegasus (Showcase)` matches `Arborea Pegasus`)
+- **Most recent printing**: When multiple partial matches exist, selects the most recent
+
+**Examples:**
+- Query: `Lightning Bolt [M21]` (wrong set) → `Lightning Bolt [LEA]` (name-only fallback)
+- Query: `Ballista Watcher [VOW]` (partial name) → `Ballista Watcher // Ballista Wielder [VOW]` (partial match)
+- Query: `Arborea Pegasus (Showcase) [AFR]` (with variant) → `Arborea Pegasus [AFR]` (partial match)
+
+**Console output examples:**
+- `Fallback: Lightning Bolt [M21] → found in [LEA] (1993-08-05)`
+- `Partial match: Ballista Watcher [VOW] → found "Ballista Watcher // Ballista Wielder" in [VOW] (2021-11-19)`
 
 ## Error Handling
 

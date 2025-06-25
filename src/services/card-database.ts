@@ -58,14 +58,14 @@ export class CardDatabase {
       const exactMatch = this.nameSetIndex.get(exactKey)?.[0];
       
       if (exactMatch) {
-        // Exact match found
+        // 1. Exact match found
         matches.push({
           query,
           card: exactMatch,
           matchType: 'exact'
         });
       } else {
-        // Try fallback
+        // 2. Try name-only fallback
         const nameKey = normalizeString(query.name);
         const fallbackCandidates = this.nameOnlyIndex.get(nameKey);
         
@@ -78,7 +78,18 @@ export class CardDatabase {
           });
           console.log(`  Fallback: ${query.name} [${query.set}] → found in [${fallbackCard.set.toUpperCase()}] (${fallbackCard.released_at})`);
         } else {
-          unmatched.push(query);
+          // 3. Try partial name matching
+          const partialMatch = this.findPartialMatch(query.name);
+          if (partialMatch) {
+            matches.push({
+              query,
+              card: partialMatch,
+              matchType: 'fallback'
+            });
+            console.log(`  Partial match: ${query.name} [${query.set}] → found "${partialMatch.name}" in [${partialMatch.set.toUpperCase()}] (${partialMatch.released_at})`);
+          } else {
+            unmatched.push(query);
+          }
         }
       }
     }
@@ -187,6 +198,39 @@ export class CardDatabase {
       return dateB.getTime() - dateA.getTime();
     });
     return sorted[0]!;
+  }
+
+  /**
+   * Find a partial match where the query name and card name have substring overlap
+   * @param queryName The card name to search for
+   * @returns The best matching card or null if not found
+   */
+  private findPartialMatch(queryName: string): ScryfallCard | null {
+    const normalizedQuery = normalizeString(queryName);
+    const candidates: ScryfallCard[] = [];
+
+    // Search through all cards for partial matches
+    for (const card of this.cards) {
+      const normalizedCardName = normalizeString(card.name);
+      
+      // Skip if they're exactly the same (should have been caught earlier)
+      if (normalizedQuery === normalizedCardName) {
+        continue;
+      }
+      
+      // Check if query name is a subset of card name (e.g., "Ballista Watcher" matches "Ballista Watcher // Ballista Wielder")
+      // OR if card name is a subset of query name (e.g., "Arborea Pegasus" matches "Arborea Pegasus (Showcase)")
+      if (normalizedCardName.includes(normalizedQuery) || normalizedQuery.includes(normalizedCardName)) {
+        candidates.push(card);
+      }
+    }
+
+    if (candidates.length === 0) {
+      return null;
+    }
+
+    // Return the most recent match from candidates
+    return this.getMostRecentCard(candidates);
   }
 
   /**
