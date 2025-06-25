@@ -1,0 +1,18 @@
+# Test file with card counts
+# Format: Count Card Name [SET] or Card Name [SET]
+
+# Cards with counts
+1 Lightning Bolt [LEA]
+4 Green Dragon [AFR]
+2 Counterspell [2ED]
+
+# Cards without counts (should still work)
+Lightning Bolt [LEA]
+Green Dragon [AFR]
+
+# Edge cases with different count formats
+10 Lightning Bolt [LEA]
+999 Green Dragon [AFR]
+
+# This should not match
+1 Nonexistent Card [FAKE]

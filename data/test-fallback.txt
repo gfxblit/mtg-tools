@@ -1,0 +1,12 @@
+# Test file for fallback functionality
+# These should work with exact matching
+Lightning Bolt [LEA]
+Green Dragon [AFR]
+
+# These should trigger fallback to most recent set
+Lightning Bolt [M21]        # Should fallback to LEA (most recent in our sample)
+Counterspell [KLD]          # Should fallback to 2ED (most recent in our sample)
+Green Dragon [ZNR]          # Should fallback to AFR (most recent in our sample)
+
+# This should remain unmatched
+Nonexistent Card [FAKE]

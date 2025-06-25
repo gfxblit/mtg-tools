@@ -1,0 +1,16 @@
+# Test file with edge cases
+# This should work fine
+Lightning Bolt [LEA]
+
+# Empty lines and comments should be ignored
+
+
+# Cards with different casing should match
+green dragon [afr]
+COUNTERSPELL [2ED]
+
+# This should not match (fake card)
+Nonexistent Card [FAKE]
+
+# Mixed case set codes
+Lightning Bolt [lea]

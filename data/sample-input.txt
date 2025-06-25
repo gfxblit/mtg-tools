@@ -1,0 +1,19 @@
+# Sample input file for MTG Card Filter Tool
+# Format: Card Name [SET]
+# Lines starting with # are comments and will be ignored
+
+# Some classic cards from Alpha/Beta/Unlimited (LEA/LEB/2ED)
+Lightning Bolt [LEA]
+Black Lotus [LEA]
+Ancestral Recall [LEA]
+
+# Some cards from Adventures in the Forgotten Realms
+Green Dragon [AFR]
+Red Dragon [AFR]
+Blue Dragon [AFR]
+
+# A card from a different set
+Counterspell [2ED]
+
+# This line will be unmatched (fake card)
+# Fake Card [XYZ]
