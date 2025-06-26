@@ -158,6 +158,11 @@ export class MarkdownGenerator {
   public generateCardMarkdown(card: ScryfallCard): string {
     const sections: string[] = [];
 
+    // YAML frontmatter
+    const frontmatter = this.generateYamlFrontmatter(card);
+    sections.push(frontmatter);
+    sections.push('');
+
     // Title
     sections.push(`# ${card.name}`);
     sections.push('');
@@ -284,6 +289,59 @@ export class MarkdownGenerator {
     }
 
     return sections.join('\n');
+  }
+
+  /**
+   * Generate YAML frontmatter for a card
+   */
+  private generateYamlFrontmatter(card: ScryfallCard): string {
+    const tags = this.extractTagsFromTypeLine(card.type_line);
+    const frontmatter: string[] = [];
+    
+    frontmatter.push('---');
+    frontmatter.push(`title: "${card.name}"`);
+    frontmatter.push(`tags:`);
+    
+    for (const tag of tags) {
+      frontmatter.push(`  - ${tag}`);
+    }
+    
+    frontmatter.push('---');
+    
+    return frontmatter.join('\n');
+  }
+
+  /**
+   * Extract tags from type line field
+   */
+  private extractTagsFromTypeLine(typeLine: string): string[] {
+    if (!typeLine) {
+      return [];
+    }
+
+    // Split by common delimiters and clean up
+    const words = typeLine
+      .toLowerCase()
+      .replace(/[—–-]/g, ' ') // Replace em-dash, en-dash, hyphen with space
+      .replace(/[^\w\s]/g, '') // Remove punctuation except word characters and spaces
+      .split(/\s+/) // Split on whitespace
+      .filter(word => word.length > 0); // Remove empty strings
+
+    // Create tags from cleaned words
+    const tags: string[] = [];
+    
+    for (const word of words) {
+      // Skip common articles and prepositions
+      if (!['the', 'a', 'an', 'of', 'and', 'or'].includes(word)) {
+        tags.push(word);
+      }
+    }
+
+    // Remove duplicates and sort
+    const uniqueTags = Array.from(new Set(tags));
+    uniqueTags.sort();
+
+    return uniqueTags;
   }
 
   /**
