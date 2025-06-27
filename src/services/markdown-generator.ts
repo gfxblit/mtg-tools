@@ -295,14 +295,20 @@ export class MarkdownGenerator {
    * Generate YAML frontmatter for a card
    */
   private generateYamlFrontmatter(card: ScryfallCard): string {
-    const tags = this.extractTagsFromTypeLine(card.type_line);
+    const typeLineTags = this.extractTagsFromTypeLine(card.type_line);
+    const keywordTags = this.extractKeywordTags(card.keywords);
+    
+    // Combine and deduplicate tags
+    const allTags = [...typeLineTags, ...keywordTags];
+    const uniqueTags = Array.from(new Set(allTags)).sort();
+    
     const frontmatter: string[] = [];
     
     frontmatter.push('---');
     frontmatter.push(`title: "${card.name}"`);
     frontmatter.push(`tags:`);
     
-    for (const tag of tags) {
+    for (const tag of uniqueTags) {
       frontmatter.push(`  - ${tag}`);
     }
     
@@ -342,6 +348,27 @@ export class MarkdownGenerator {
     uniqueTags.sort();
 
     return uniqueTags;
+  }
+
+  /**
+   * Extract and format keyword tags from card keywords
+   */
+  private extractKeywordTags(keywords?: string[]): string[] {
+    if (!keywords || keywords.length === 0) {
+      return [];
+    }
+
+    // Convert keywords to lowercase tags
+    const keywordTags = keywords.map(keyword => {
+      return keyword
+        .toLowerCase()
+        .replace(/[^\w\s]/g, '') // Remove punctuation
+        .replace(/\s+/g, '-') // Replace spaces with hyphens
+        .trim();
+    }).filter(tag => tag.length > 0); // Remove empty tags
+
+    // Remove duplicates and sort
+    return Array.from(new Set(keywordTags)).sort();
   }
 
   /**

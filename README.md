@@ -11,6 +11,8 @@ A TypeScript command-line tool that reads a list of Magic: The Gathering card na
   - Partial matching for double-faced cards and variants (showcase, etc.)
   - Always selects most recent printing when multiple options exist
 - **JSON Output**: Write matched cards to a new JSON file
+- **Markdown Export**: Optionally export matched cards as Markdown files with YAML frontmatter
+- **Frontmatter Tags**: Markdown frontmatter now includes both card type tags and card keywords (e.g., "flying", "trample") as tags
 - **Enhanced Reporting**: Clear distinction between exact, fallback, and partial matches
 - **Error Handling**: Comprehensive error reporting and validation
 - **CLI Interface**: Command-line interface with helpful options
@@ -197,7 +199,23 @@ The tool expects a JSON file containing an array of Scryfall card objects. Examp
 
 ### Output
 
-The tool generates a JSON file containing only the matched cards:
+The tool can generate:
+- A JSON file containing only the matched cards
+- Markdown files for each matched card (if output directory is specified), with YAML frontmatter including both type tags and card keywords
+
+#### Example Markdown Frontmatter
+
+```yaml
+---
+title: "Green Dragon"
+tags:
+  - creature
+  - dragon
+  - flying
+---
+```
+
+#### Example JSON Output
 
 ```json
 [
