@@ -15,10 +15,18 @@
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix"
   },
-  "keywords": ["mtg", "magic-the-gathering", "scryfall", "cards", "filter", "typescript"],
+  "keywords": [
+    "mtg",
+    "magic-the-gathering",
+    "scryfall",
+    "cards",
+    "filter",
+    "typescript"
+  ],
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "@types/jest": "^30.0.0",
     "@types/node": "^20.0.0",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
