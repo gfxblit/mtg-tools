@@ -297,9 +297,10 @@ export class MarkdownGenerator {
   private generateYamlFrontmatter(card: ScryfallCard): string {
     const typeLineTags = this.extractTagsFromTypeLine(card.type_line);
     const keywordTags = this.extractKeywordTags(card.keywords);
+    const colorTags = this.extractColorTags(card.colors);
     
     // Combine and deduplicate tags
-    const allTags = [...typeLineTags, ...keywordTags];
+    const allTags = [...typeLineTags, ...keywordTags, ...colorTags];
     const uniqueTags = Array.from(new Set(allTags)).sort();
     
     const frontmatter: string[] = [];
@@ -369,6 +370,36 @@ export class MarkdownGenerator {
 
     // Remove duplicates and sort
     return Array.from(new Set(keywordTags)).sort();
+  }
+
+  /**
+   * Extract color tags from card colors
+   */
+  private extractColorTags(colors?: string[]): string[] {
+    if (colors === undefined) {
+      return ['undefined-color'];
+    }
+    
+    if (colors.length === 0) {
+      return ['colorless'];
+    }
+
+    // Map Scryfall color abbreviations to full color names
+    const colorMap: Record<string, string> = {
+      'W': 'white',
+      'U': 'blue', 
+      'B': 'black',
+      'R': 'red',
+      'G': 'green'
+    };
+
+    // Convert colors to lowercase tag format
+    const colorTags = colors.map(color => {
+      return colorMap[color.toUpperCase()] || color.toLowerCase();
+    });
+
+    // Remove duplicates and sort
+    return Array.from(new Set(colorTags)).sort();
   }
 
   /**
